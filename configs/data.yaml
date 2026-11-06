@@ -33,6 +33,9 @@ aoi_bbox_wgs84:
 crs: EPSG:32645   # UTM Zone 45N — Jharkhand
 target_resolution_m: 10
 
-# Thresholding settings for self-derived label generation
-ndvi_forest_threshold: 0.52
+# Thresholding settings for self-derived label generation (calibrated & approved)
+ndvi_forest_threshold: 0.43
 ndwi_water_max: 0.0
+use_mndwi: true
+use_osm_roads: true
+min_patch_pixels: 4
