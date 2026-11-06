@@ -1,0 +1,38 @@
+# Data pipeline configuration — Deoghar Forest Cover Analysis (Binary Forest vs. Non-Forest)
+# Paths are relative to repo root.
+
+raw_dir: data/raw/s2
+label_dir: data/raw/labels
+static_path: data/raw/static/static_dem_slope.tif
+processed_dir: data/processed
+
+years:
+  start: 2016
+  end: 2025
+
+# Tile geometry
+tile_size: 128
+tile_overlap: 32   # 25% overlap for border coverage
+
+# Binary Classification: Non-Forest (0) vs. Forest (1)
+n_classes: 2
+class_names:
+  - non_forest
+  - forest
+
+# Forest class ID
+forest_class_ids: [1]
+
+# Deoghar new study area bounding box (WGS84)
+aoi_bbox_wgs84:
+  west: 86.086323
+  south: 24.155483
+  east: 86.862411
+  north: 24.498356
+
+crs: EPSG:32645   # UTM Zone 45N — Jharkhand
+target_resolution_m: 10
+
+# Thresholding settings for self-derived label generation
+ndvi_forest_threshold: 0.52
+ndwi_water_max: 0.0

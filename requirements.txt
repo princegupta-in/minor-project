@@ -1,0 +1,45 @@
+# --- Core scientific stack ---
+numpy>=1.26
+scipy>=1.11
+pandas>=2.1
+scikit-learn>=1.4
+matplotlib>=3.8
+seaborn>=0.13
+tqdm>=4.66
+pyyaml>=6.0
+
+# --- Google Earth Engine ---
+earthengine-api>=0.1.395
+geemap>=0.32
+
+# --- Geospatial ---
+rasterio>=1.3
+geopandas>=0.14
+shapely>=2.0
+fiona>=1.9
+pyproj>=3.6
+rioxarray>=0.15
+xarray>=2024.1
+
+# --- Deep learning (PyTorch) ---
+# Install the GPU build for your CUDA version separately:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+torch>=2.2
+torchvision>=0.17
+
+# --- Logging / experiment tracking ---
+tensorboard>=2.15
+# wandb>=0.16   # optional, uncomment if using Weights & Biases
+
+# --- Notebooks ---
+jupyterlab>=4.0
+ipykernel>=6.29
+
+# --- Image / animation ---
+Pillow>=10.2
+imageio>=2.34
+imageio-ffmpeg>=0.4
+
+# --- Optional but recommended ---
+albumentations>=1.4   # augmentations
+einops>=0.7           # tensor reshaping clarity

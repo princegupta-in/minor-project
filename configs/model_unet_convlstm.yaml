@@ -1,0 +1,29 @@
+# U-Net + ConvLSTM bottleneck config — Deoghar Forest Cover
+# Better spatial localisation; more parameters — use Colab/Kaggle T4 for full training.
+name: unet_convlstm_v1
+
+seq_length: 8
+target_offset: 1
+
+model: unet_convlstm
+n_classes: 2
+model_kwargs:
+  in_channels: 12       # 10 S2 bands/indices + DEM + slope
+  n_classes: 2
+  base_channels: 16
+  bottleneck_hidden: 64
+
+epochs: 60
+batch_size: 2           # heavier model; keep small for 4GB VRAM
+num_workers: 2
+lr: 5.0e-4
+weight_decay: 1.0e-4
+loss: focal
+focal_gamma: 2.0
+amp: true
+grad_accum_steps: 4    # effective batch = 8
+save_every: 5
+early_stop_patience: 12
+
+ckpt_dir: outputs/checkpoints
+log_dir: outputs/runs

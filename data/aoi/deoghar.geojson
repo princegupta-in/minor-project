@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "name": "deoghar_aoi",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "region": "Deoghar Study Area",
+        "state": "Jharkhand",
+        "country": "India"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [86.104352, 24.498356],
+            [86.844350, 24.497739],
+            [86.862411, 24.175508],
+            [86.086323, 24.155483],
+            [86.104352, 24.498356]
+          ]
+        ]
+      }
+    }
+  ]
+}
