@@ -12,17 +12,17 @@ model_kwargs:
   kernel_size: 3
   n_classes: 2
 
-epochs: 60
-batch_size: 4
-num_workers: 2
+epochs: 40
+batch_size: 16
+num_workers: 0
 lr: 1.0e-3
 weight_decay: 1.0e-4
 loss: focal
 focal_gamma: 2.0
 amp: true
-grad_accum_steps: 2    # effective batch = 8
+grad_accum_steps: 1
 save_every: 5
-early_stop_patience: 10
+early_stop_patience: 8
 
 ckpt_dir: outputs/checkpoints
 log_dir: outputs/runs

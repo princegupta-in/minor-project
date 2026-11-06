@@ -87,23 +87,24 @@ def add_indices(img: ee.Image) -> ee.Image:
 def annual_composite(
     year: int,
     aoi: ee.Geometry,
-    start_month: int = 1,
+    start_month: int = 10,
     end_month: int = 12,
 ) -> ee.Image:
-    """Median composite for a calendar year (or seasonal window) + indices."""
+    """Median composite for a seasonal window (default: Oct-Dec Post-Monsoon) + indices."""
+    days_in_month = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
     if end_month >= start_month:
         start = f"{year}-{start_month:02d}-01"
-        end   = f"{year}-{end_month:02d}-28" if end_month in (2,) else f"{year}-{end_month:02d}-30"
+        end   = f"{year}-{end_month:02d}-{days_in_month.get(end_month, 30):02d}"
     else:
-        # Rabi wraps year boundary (Nov–Mar)
+        # Wraps year boundary
         start = f"{year}-{start_month:02d}-01"
-        end   = f"{year + 1}-{end_month:02d}-28"
+        end   = f"{year + 1}-{end_month:02d}-{days_in_month.get(end_month, 28):02d}"
 
     coll = (
         ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
         .filterBounds(aoi)
         .filterDate(start, end)
-        .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 70))  # relaxed for monsoon
+        .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 70))
         .map(mask_s2_clouds)
         .select(S2_BANDS, S2_RENAME)
     )
@@ -137,10 +138,12 @@ def export_image(
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--years", nargs=2, type=int, default=[2015, 2025], metavar=("START", "END"))
+    p.add_argument("--years", nargs=2, type=int, default=[2016, 2025], metavar=("START", "END"))
+    p.add_argument("--start-month", type=int, default=10, help="Start month (default: 10 = Oct, FSI Post-Monsoon)")
+    p.add_argument("--end-month", type=int, default=12, help="End month (default: 12 = Dec, FSI Post-Monsoon)")
     p.add_argument("--aoi", type=Path, default=Path("data/aoi/deoghar.geojson"))
     p.add_argument("--out", type=Path, default=Path("data/raw/s2"))
-    p.add_argument("--drive-folder", default="deoghar_forest_s2")
+    p.add_argument("--drive-folder", default="deoghar_forest_s2_postmonsoon")
     p.add_argument("--scale", type=int, default=10)
     p.add_argument("--project", default=None)
     p.add_argument(
@@ -168,7 +171,7 @@ def main() -> None:
     args.out.mkdir(parents=True, exist_ok=True)
 
     start, end = args.years
-    print(f"Submitting Sentinel-2 exports {start}..{end} -> Drive folder '{args.drive_folder}'")
+    print(f"Submitting Sentinel-2 FSI Post-Monsoon exports (Months {args.start_month}..{args.end_month}) {start}..{end} -> Drive folder '{args.drive_folder}'")
 
     tasks = []
     for year in range(start, end + 1):
@@ -180,7 +183,7 @@ def main() -> None:
                 tasks.append((year, season, task))
                 print(f"  submitted {name}  task_id={task.id}")
         else:
-            img  = annual_composite(year, aoi)
+            img  = annual_composite(year, aoi, start_month=args.start_month, end_month=args.end_month)
             name = f"s2_{year}"
             task = export_image(img, name, aoi, args.drive_folder, args.scale)
             tasks.append((year, "annual", task))

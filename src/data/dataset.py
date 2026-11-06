@@ -46,13 +46,14 @@ class LULCSequenceDataset(Dataset):
         self.transform    = transform
 
         # Build sliding-window index over (file, start_t) pairs
-        self.index: List[Tuple[int, int]] = []
-        for fi, fp in enumerate(self.files):
-            with np.load(fp) as f:
-                T = f["frames"].shape[0]
-            max_start = T - seq_length - target_offset
-            for s in range(0, max_start + 1):
-                self.index.append((fi, s))
+        with np.load(self.files[0]) as first_f:
+            T = first_f["frames"].shape[0]
+        max_start = T - seq_length - target_offset
+        self.index: List[Tuple[int, int]] = [
+            (fi, s)
+            for fi in range(len(self.files))
+            for s in range(0, max_start + 1)
+        ]
 
     def __len__(self) -> int:
         return len(self.index)

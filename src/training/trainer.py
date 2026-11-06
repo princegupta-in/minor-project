@@ -13,8 +13,18 @@ from typing import Optional
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
+
+try:
+    from torch.utils.tensorboard import SummaryWriter
+except ImportError:
+    class SummaryWriter:
+        def __init__(self, log_dir: Optional[str] = None):
+            self.log_dir = log_dir
+        def add_scalar(self, tag: str, scalar_value: float, global_step: Optional[int] = None):
+            pass
+        def close(self):
+            pass
 
 from ..evaluation.metrics import StreamingConfusion
 
@@ -134,7 +144,7 @@ class Trainer:
     @torch.no_grad()
     def _validate(self, epoch: int) -> dict:
         self.model.eval()
-        cm   = StreamingConfusion(self.n_classes)
+        cm   = StreamingConfusion(self.n_classes, ignore_index=255)
         loss_sum, n = 0.0, 0
         for batch in tqdm(self.val_loader, desc=f"val {epoch}", leave=False):
             out   = self._step(batch)

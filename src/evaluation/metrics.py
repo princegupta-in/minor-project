@@ -15,8 +15,8 @@ from typing import Dict, List, Optional
 import numpy as np
 
 
-# Deoghar project class IDs for forest cover
-FOREST_CLASSES = [1, 2]   # dense_forest=1, open_forest=2
+# Deoghar project class IDs for forest cover (Binary: 1 = Forest, 0 = Non-forest)
+FOREST_CLASSES = [1]
 
 
 class StreamingConfusion:

@@ -24,7 +24,7 @@ class FocalLoss(nn.Module):
         ignore_index: label value to ignore in loss computation
     """
 
-    def __init__(self, gamma: float = 2.0, weight: Optional[torch.Tensor] = None, ignore_index: int = -100):
+    def __init__(self, gamma: float = 2.0, weight: Optional[torch.Tensor] = None, ignore_index: int = 255):
         super().__init__()
         self.gamma        = gamma
         self.weight       = weight

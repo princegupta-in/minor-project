@@ -13,17 +13,17 @@ model_kwargs:
   base_channels: 16
   bottleneck_hidden: 64
 
-epochs: 60
-batch_size: 2           # heavier model; keep small for 4GB VRAM
-num_workers: 2
+epochs: 40
+batch_size: 16          # optimized for RTX 2050 (uses ~1GB of 4GB VRAM with AMP)
+num_workers: 0          # 0 on Windows avoids multiprocessing overhead
 lr: 5.0e-4
 weight_decay: 1.0e-4
 loss: focal
 focal_gamma: 2.0
 amp: true
-grad_accum_steps: 4    # effective batch = 8
+grad_accum_steps: 1
 save_every: 5
-early_stop_patience: 12
+early_stop_patience: 8
 
 ckpt_dir: outputs/checkpoints
 log_dir: outputs/runs

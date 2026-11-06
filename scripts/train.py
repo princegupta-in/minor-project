@@ -68,10 +68,11 @@ def main() -> None:
     val_ds       = Subset(full_ds, val_idx)
     print(f"[train] train={len(train_idx)} windows  val={len(val_idx)} windows")
 
+    num_workers = 0 if sys.platform == "win32" else cfg.get("num_workers", 2)
     train_loader = DataLoader(train_ds, batch_size=cfg["batch_size"], shuffle=True,
-                              num_workers=cfg.get("num_workers", 2), pin_memory=True)
+                              num_workers=num_workers, pin_memory=True)
     val_loader   = DataLoader(val_ds,   batch_size=cfg["batch_size"], shuffle=False,
-                              num_workers=cfg.get("num_workers", 2), pin_memory=True)
+                              num_workers=num_workers, pin_memory=True)
 
     # Model & input channel validation
     sample_x, _ = full_ds[0]
@@ -84,19 +85,19 @@ def main() -> None:
     n_params = sum(p.numel() for p in model.parameters())
     print(f"[train] params={n_params:,}")
 
-    # Loss
+    # Loss with NoData (255) ignored
     loss_fn = (
-        FocalLoss(gamma=cfg.get("focal_gamma", 2.0))
+        FocalLoss(gamma=cfg.get("focal_gamma", 2.0), ignore_index=255)
         if cfg.get("loss", "ce") == "focal"
-        else torch.nn.CrossEntropyLoss()
+        else torch.nn.CrossEntropyLoss(ignore_index=255)
     )
 
     train_cfg = TrainConfig(
-        epochs=cfg["epochs"],
+        epochs=2 if args.debug else cfg["epochs"],
         lr=cfg["lr"],
         weight_decay=cfg.get("weight_decay", 1e-4),
         batch_size=cfg["batch_size"],
-        num_workers=cfg.get("num_workers", 2),
+        num_workers=0 if sys.platform == "win32" else cfg.get("num_workers", 2),
         grad_accum_steps=cfg.get("grad_accum_steps", 1),
         amp=cfg.get("amp", True),
         ckpt_dir=cfg.get("ckpt_dir", "outputs/checkpoints"),
